@@ -50,6 +50,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 # Komplette node_modules aus dem builder — enthält Prisma CLI, better-sqlite3 (Linux-Binary),
 # generierte Prisma-Client-Dateien und alle transitiven Abhängigkeiten.
 # Nach dem Build wurden dev-Deps via npm prune entfernt, bleibt also schlank.
