@@ -107,14 +107,14 @@ export default function Home() {
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      const stored = localStorage.getItem('gnotes-view-mode');
+      const stored = localStorage.getItem('j1notes-view-mode');
       if (stored === 'list' || stored === 'grid') setViewMode(stored);
     }
     return () => { mounted = false; };
   }, []);
 
   // View Mode in localStorage speichern wenn er sich ändert
-  useEffect(() => { localStorage.setItem('gnotes-view-mode', viewMode); }, [viewMode]);
+  useEffect(() => { localStorage.setItem('j1notes-view-mode', viewMode); }, [viewMode]);
 
   // Auth-Einstellungen laden wenn Settings geöffnet wird
   useEffect(() => {

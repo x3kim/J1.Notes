@@ -5,7 +5,7 @@ import I18nProvider from '@/lib/i18n/I18nProvider';
 import { ThemeProvider } from '@/lib/themes/ThemeContext';
 
 export const metadata: Metadata = {
-  title: 'gNotes',
+  title: 'J1.Notes',
   description: 'Self-hosted Notes App',
   manifest: '/manifest.json',
   icons: {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'gNotes',
+    title: 'J1.Notes',
   },
 };
 

@@ -26,12 +26,12 @@ describe('Footer Component', () => {
   });
 
   test('renders active GitHub link when NEXT_PUBLIC_GITHUB_URL is provided', () => {
-    process.env.NEXT_PUBLIC_GITHUB_URL = 'https://github.com/x3kim/gNotes';
+    process.env.NEXT_PUBLIC_GITHUB_URL = 'https://github.com/x3kim/J1.Notes';
     const { container } = render(<Footer />);
 
     const link = container.querySelector('a');
     expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', 'https://github.com/x3kim/gNotes');
+    expect(link).toHaveAttribute('href', 'https://github.com/x3kim/J1.Notes');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
@@ -61,7 +61,7 @@ describe('Footer Component', () => {
   });
 
   test('shows tooltip when URL is available', () => {
-    process.env.NEXT_PUBLIC_GITHUB_URL = 'https://github.com/x3kim/gNotes';
+    process.env.NEXT_PUBLIC_GITHUB_URL = 'https://github.com/x3kim/J1.Notes';
     const { container } = render(<Footer />);
 
     const footer = container.querySelector('footer');

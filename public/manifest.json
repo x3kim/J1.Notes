@@ -1,7 +1,7 @@
 {
-  "name": "gNotes — Self-hosted Notes",
-  "short_name": "gNotes",
-  "description": "Self-hosted Google Keep Alternative",
+  "name": "J1.Notes — Self-hosted Notes",
+  "short_name": "J1.Notes",
+  "description": "Self-hosted Notes App",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#202124",

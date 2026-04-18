@@ -1,5 +1,16 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import DOMPurify from 'isomorphic-dompurify';
+
+function sanitizeNote(body: Record<string, unknown>) {
+  if (typeof body.content_text === 'string') {
+    body.content_text = DOMPurify.sanitize(body.content_text, { USE_PROFILES: { html: true } });
+  }
+  if (typeof body.title === 'string') {
+    body.title = body.title.slice(0, 500);
+  }
+  return body;
+}
 
 export async function GET() {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -15,7 +26,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-  const body = await request.json();
+  const rawBody = await request.json();
+  const body = sanitizeNote(rawBody);
   let user = await prisma.user.findFirst();
   if (!user) user = await prisma.user.create({ data: { email: "admin", password_hash: "" }});
 
