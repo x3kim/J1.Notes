@@ -18,7 +18,7 @@ const config: Config = {
         '<rootDir>/src/components/**/__tests__/**/*.test.tsx',
         '<rootDir>/src/lib/**/__tests__/**/*.test.ts',
       ],
-      setupFilesAfterFramework: ['<rootDir>/jest.setup.ts'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
       moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
     },
   ],
