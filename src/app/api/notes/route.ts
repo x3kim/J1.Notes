@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import DOMPurify from 'isomorphic-dompurify';
 
-function sanitizeNote(body: Record<string, unknown>) {
+function sanitizeNote(body: Record<string, any>): Record<string, any> {
   if (typeof body.content_text === 'string') {
     body.content_text = DOMPurify.sanitize(body.content_text, { USE_PROFILES: { html: true } });
   }
