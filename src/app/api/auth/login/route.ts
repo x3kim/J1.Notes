@@ -3,7 +3,7 @@ import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/db';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'gnotes-secret-key-change-in-production');
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'j1notes-secret-change-in-production');
 
 export async function POST(request: Request) {
   try {
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       .sign(JWT_SECRET);
 
     const response = NextResponse.json({ success: true });
-    response.cookies.set('gnotes-auth', token, {
+    response.cookies.set('j1notes-auth', token, {
       httpOnly: true,
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 30, // 30 Tage

@@ -171,7 +171,7 @@ export const THEMES: Theme[] = [
 ];
 
 export const DEFAULT_THEME: ThemeId = 'dark';
-export const THEME_STORAGE_KEY = 'gnotes-theme';
+export const THEME_STORAGE_KEY = 'j1notes-theme';
 
 export function getTheme(id: ThemeId): Theme {
   return THEMES.find(t => t.id === id) ?? THEMES[1]; // fallback to dark

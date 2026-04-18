@@ -3,36 +3,37 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: gnotes-db
+    container_name: j1notes-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: gnotes
-      POSTGRES_USER: gnotes
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gnotes_password}
+      POSTGRES_DB: j1notes
+      POSTGRES_USER: j1notes
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-j1notes_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gnotes"]
+      test: ["CMD-SHELL", "pg_isready -U j1notes"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  gnotes:
+  j1notes:
     build:
       context: .
       args:
         DATABASE_PROVIDER: postgresql
-    container_name: gnotes
+    image: j1notes
+    container_name: j1notes
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
     environment:
       - DATABASE_PROVIDER=postgresql
-      - DATABASE_URL=postgresql://gnotes:${POSTGRES_PASSWORD:-gnotes_password}@postgres:5432/gnotes
-      - JWT_SECRET=${JWT_SECRET:-gnotes-secret-change-me}
+      - DATABASE_URL=postgresql://j1notes:${POSTGRES_PASSWORD:-j1notes_password}@postgres:5432/j1notes
+      - JWT_SECRET=${JWT_SECRET:-CHANGE-ME-IN-PRODUCTION}
       - NODE_ENV=production
     volumes:
-      - gnotes_uploads:/app/public/uploads
+      - j1notes_uploads:/app/public/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,4 +46,4 @@ services:
 
 volumes:
   postgres_data:
-  gnotes_uploads:
+  j1notes_uploads:

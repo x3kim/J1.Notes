@@ -1,5 +1,5 @@
 /**
- * Email service for gNotes.
+ * Email service for J1.Notes.
  *
  * Uses nodemailer with SMTP configuration from environment variables.
  * If SMTP is not configured, falls back to a dev mode that logs emails to the
@@ -43,7 +43,7 @@ function getTransporter(): Transporter | null {
 }
 
 export function getFromAddress(): string {
-  return process.env.SMTP_FROM || 'gNotes <no-reply@gnotes.local>';
+  return process.env.SMTP_FROM || 'J1.Notes <no-reply@j1notes.local>';
 }
 
 /**
@@ -58,7 +58,7 @@ export async function sendMail(options: SendMailOptions): Promise<{ dev: boolean
     // eslint-disable-next-line no-console
     console.log('\n============================================');
     // eslint-disable-next-line no-console
-    console.log('[gNotes email:dev] SMTP not configured. Email would have been sent:');
+    console.log('[J1.Notes email:dev] SMTP not configured. Email would have been sent:');
     // eslint-disable-next-line no-console
     console.log(`  To:      ${options.to}`);
     // eslint-disable-next-line no-console
@@ -88,11 +88,11 @@ export async function sendMail(options: SendMailOptions): Promise<{ dev: boolean
  * Builds the password-reset email (plain + HTML).
  */
 export function buildResetEmail(resetUrl: string): { subject: string; text: string; html: string } {
-  const subject = 'gNotes — Password reset requested';
+  const subject = 'J1.Notes — Password reset requested';
   const text = [
     'Hello,',
     '',
-    'We received a request to reset the password for your gNotes account.',
+    'We received a request to reset the password for your J1.Notes account.',
     '',
     'To choose a new password, open the following link:',
     resetUrl,
@@ -100,7 +100,7 @@ export function buildResetEmail(resetUrl: string): { subject: string; text: stri
     'This link will expire in 1 hour. If you did not request a password reset,',
     'you can safely ignore this email — your password will remain unchanged.',
     '',
-    '— gNotes',
+    '— J1.Notes',
   ].join('\n');
 
   const html = `
@@ -108,9 +108,9 @@ export function buildResetEmail(resetUrl: string): { subject: string; text: stri
 <html>
   <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; padding: 24px; margin: 0;">
     <div style="max-width: 480px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 32px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
-      <h1 style="margin: 0 0 16px; font-size: 20px; color: #111;">Reset your gNotes password</h1>
+      <h1 style="margin: 0 0 16px; font-size: 20px; color: #111;">Reset your J1.Notes password</h1>
       <p style="color: #333; font-size: 14px; line-height: 1.55;">
-        We received a request to reset the password for your gNotes account.
+        We received a request to reset the password for your J1.Notes account.
         Click the button below to choose a new password.
       </p>
       <p style="margin: 24px 0;">
@@ -127,7 +127,7 @@ export function buildResetEmail(resetUrl: string): { subject: string; text: stri
         This link expires in 1 hour. If you did not request a password reset,
         you can safely ignore this email — your password will remain unchanged.
       </p>
-      <p style="color: #999; font-size: 12px; margin-top: 24px;">— gNotes</p>
+      <p style="color: #999; font-size: 12px; margin-top: 24px;">— J1.Notes</p>
     </div>
   </body>
 </html>`.trim();

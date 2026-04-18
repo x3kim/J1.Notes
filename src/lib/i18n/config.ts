@@ -1,4 +1,4 @@
-// Central i18n runtime configuration for gNotes
+// Central i18n runtime configuration for J1.Notes
 // Loads translation resources from public/locales/{lng}/{ns}.json at build time
 // via Next.js JSON import so there is no runtime HTTP fetch needed (self-hosted).
 import i18n from 'i18next';
@@ -28,7 +28,7 @@ import frErrors from '../../../public/locales/fr/errors.json';
 export const SUPPORTED_LOCALES = ['en', 'de', 'fr'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: SupportedLocale = 'en';
-export const LOCALE_STORAGE_KEY = 'gnotes-locale';
+export const LOCALE_STORAGE_KEY = 'j1notes-locale';
 
 export const resources = {
   en: {

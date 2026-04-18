@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gnotes-v1';
+const CACHE_NAME = 'j1notes-v1';
 const APP_SHELL = [
   '/',
   '/manifest.json',

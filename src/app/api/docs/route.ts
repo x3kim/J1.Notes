@@ -7,7 +7,7 @@ const SWAGGER_UI_VERSION = '5.17.14';
 /**
  * GET /api/docs
  *
- * Serves an interactive Swagger UI for the gNotes OpenAPI specification.
+ * Serves an interactive Swagger UI for the J1.Notes OpenAPI specification.
  * The spec is loaded from /public/api/openapi.yaml.
  */
 export async function GET(request: Request) {
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>gNotes API Docs</title>
+  <title>J1.Notes API Docs</title>
   <link rel="stylesheet" href="${cdnBase}/swagger-ui.css" />
   <style>
     * { box-sizing: border-box; }
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
     #swagger-ui .topbar { background: #1a1a2e; }
     #swagger-ui .topbar-wrapper .link { display: none; }
     #swagger-ui .topbar-wrapper::after {
-      content: 'gNotes API';
+      content: 'J1.Notes API';
       color: #fff;
       font-size: 1.2rem;
       font-weight: 600;

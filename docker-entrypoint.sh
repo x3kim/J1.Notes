@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-echo "gNotes startet..."
+echo "J1.Notes startet..."
 
 # DB-Schema anwenden je nach Provider
 if [ "$DATABASE_PROVIDER" = "postgresql" ]; then

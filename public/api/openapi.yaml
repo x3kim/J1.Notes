@@ -1,0 +1,753 @@
+openapi: 3.1.0
+info:
+  title: J1.Notes API
+  description: |
+    REST API for **J1.Notes** — a self-hosted, privacy-focused notes application.
+
+    ## Authentication
+    When app-lock is enabled, all API requests require a valid `j1notes-auth` session cookie
+    obtained via `POST /api/auth/login`. Routes marked as **public** are always accessible.
+
+    ## Base URL
+    `http://localhost:3000` (default Docker setup)
+  version: "1.0.3"
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  contact:
+    name: J1.Notes on GitHub
+    url: https://github.com/x3kim/J1.Notes
+
+servers:
+  - url: /
+    description: Current server
+
+tags:
+  - name: Notes
+    description: Create, read, update, and delete notes
+  - name: Labels
+    description: Manage note labels / tags
+  - name: Auth
+    description: Authentication (login, logout, password reset)
+  - name: Profile
+    description: User profile (username & avatar)
+  - name: Settings
+    description: App-wide settings (auth / security)
+  - name: Upload
+    description: File upload endpoints
+
+paths:
+  # ── Notes ──────────────────────────────────────────────────────────────────
+
+  /api/notes:
+    get:
+      tags: [Notes]
+      summary: List all notes
+      description: Returns all non-expired notes. Notes in the trash older than 7 days are purged automatically on every request.
+      responses:
+        "200":
+          description: Array of notes (includes checklist items, labels, attachments)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+
+    post:
+      tags: [Notes]
+      summary: Create a note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NoteCreate"
+      responses:
+        "201":
+          description: Note created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+        "500":
+          description: Server error
+
+    delete:
+      tags: [Notes]
+      summary: Empty the trash
+      description: Permanently deletes all notes that are currently in the trash (soft-deleted).
+      responses:
+        "200":
+          description: Trash emptied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Papierkorb geleert
+
+  /api/notes/{id}:
+    parameters:
+      - $ref: "#/components/parameters/NoteId"
+
+    get:
+      tags: [Notes]
+      summary: Get a single note
+      responses:
+        "200":
+          description: Note object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+        "404":
+          description: Note not found
+
+    patch:
+      tags: [Notes]
+      summary: Update a note
+      description: Partially updates a note. Only the provided fields are changed. Version history is created automatically for substantial content changes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NoteUpdate"
+      responses:
+        "200":
+          description: Updated note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+        "500":
+          description: Server error
+
+    delete:
+      tags: [Notes]
+      summary: Trash or permanently delete a note
+      parameters:
+        - name: hard
+          in: query
+          description: If `true`, permanently deletes the note. Otherwise moves it to trash.
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Note deleted / moved to trash
+        "500":
+          description: Server error
+
+  /api/notes/{id}/checklist/{itemId}:
+    patch:
+      tags: [Notes]
+      summary: Toggle a checklist item
+      parameters:
+        - $ref: "#/components/parameters/NoteId"
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                checked:
+                  type: boolean
+      responses:
+        "200":
+          description: Checklist item updated
+        "404":
+          description: Item not found
+
+  /api/notes/{id}/versions:
+    get:
+      tags: [Notes]
+      summary: Get version history of a note
+      parameters:
+        - $ref: "#/components/parameters/NoteId"
+      responses:
+        "200":
+          description: Array of version snapshots (newest first)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NoteVersion"
+
+  # ── Labels ─────────────────────────────────────────────────────────────────
+
+  /api/labels:
+    get:
+      tags: [Labels]
+      summary: List all labels
+      responses:
+        "200":
+          description: Array of labels sorted alphabetically
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Label"
+
+    post:
+      tags: [Labels]
+      summary: Create a label
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  example: Work
+                color:
+                  type: string
+                  nullable: true
+                  example: "#facc15"
+      responses:
+        "201":
+          description: Label created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Label"
+        "400":
+          description: Label already exists or invalid data
+
+  /api/labels/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+    patch:
+      tags: [Labels]
+      summary: Rename / recolor a label
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                color:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Updated label
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Label"
+
+    delete:
+      tags: [Labels]
+      summary: Delete a label
+      responses:
+        "200":
+          description: Label deleted
+
+  # ── Auth ───────────────────────────────────────────────────────────────────
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Log in (public)
+      description: Validates the password/PIN and sets the `j1notes-auth` session cookie.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+                  description: Password or PIN depending on auth_type
+      responses:
+        "200":
+          description: Login successful — session cookie is set
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "400":
+          description: Auth not enabled
+        "401":
+          description: Wrong password / PIN
+        "500":
+          description: Server error
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Log out (public)
+      description: Clears the session cookie.
+      responses:
+        "200":
+          description: Logged out
+
+  /api/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Request password reset email (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: Reset email sent (or silently ignored if email not registered)
+
+  /api/auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Reset password with token (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          description: Password reset successful
+        "400":
+          description: Invalid or expired token
+
+  # ── Profile ────────────────────────────────────────────────────────────────
+
+  /api/profile:
+    get:
+      tags: [Profile]
+      summary: Get current profile
+      responses:
+        "200":
+          description: Profile data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+
+    patch:
+      tags: [Profile]
+      summary: Update profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 20
+                  pattern: "^[a-zA-Z0-9_]+$"
+                avatar:
+                  type: string
+                  nullable: true
+                  description: URL of uploaded avatar (e.g. /uploads/avatar-123.jpg) or null to remove
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          description: Validation error
+
+  # ── Avatar ─────────────────────────────────────────────────────────────────
+
+  /api/avatar:
+    post:
+      tags: [Profile]
+      summary: Upload an avatar image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: PNG, JPG or WebP — max 2 MB
+      responses:
+        "200":
+          description: Avatar uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: /uploads/avatar-1714000000000.jpg
+        "400":
+          description: No file provided or unsupported type
+        "413":
+          description: File too large
+
+    delete:
+      tags: [Profile]
+      summary: Delete avatar file
+      parameters:
+        - name: file
+          in: query
+          required: true
+          schema:
+            type: string
+          description: URL of the avatar to delete (e.g. /uploads/avatar-123.jpg)
+      responses:
+        "200":
+          description: Deleted (or gracefully ignored)
+
+  # ── Upload ─────────────────────────────────────────────────────────────────
+
+  /api/upload:
+    post:
+      tags: [Upload]
+      summary: Upload a note attachment
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image (PNG, JPG, GIF, WebP, SVG, AVIF) — max 10 MB
+      responses:
+        "200":
+          description: File uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: /uploads/1714000000000-photo.jpg
+        "413":
+          description: File too large
+        "415":
+          description: Unsupported file type
+
+    delete:
+      tags: [Upload]
+      summary: Delete an uploaded attachment
+      parameters:
+        - name: file
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+        "404":
+          description: File not found
+
+  # ── Settings ───────────────────────────────────────────────────────────────
+
+  /api/settings/auth:
+    get:
+      tags: [Settings]
+      summary: Get auth settings (public)
+      responses:
+        "200":
+          description: Current auth configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSettings"
+
+    post:
+      tags: [Settings]
+      summary: Update auth settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth_enabled:
+                  type: boolean
+                auth_type:
+                  type: string
+                  enum: [password, pin]
+                password:
+                  type: string
+                  description: New password or PIN
+                reset_email:
+                  type: string
+                  format: email
+                  nullable: true
+      responses:
+        "200":
+          description: Settings saved
+        "400":
+          description: Validation error
+        "500":
+          description: Server error
+
+# ── Components ──────────────────────────────────────────────────────────────
+
+components:
+  parameters:
+    NoteId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Note UUID
+
+  schemas:
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          nullable: true
+        content_text:
+          type: string
+          nullable: true
+          description: HTML content (from rich-text editor)
+        color:
+          type: string
+          nullable: true
+          description: CSS color string (e.g. #facc15)
+        bg_image:
+          type: string
+          nullable: true
+        pinned:
+          type: boolean
+        archived:
+          type: boolean
+        position:
+          type: integer
+        reminder_at:
+          type: string
+          format: date-time
+          nullable: true
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        checklist_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChecklistItem"
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/Label"
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attachment"
+
+    NoteCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        content_text:
+          type: string
+          nullable: true
+          description: HTML content
+        color:
+          type: string
+          nullable: true
+        bg_image:
+          type: string
+          nullable: true
+        checklist_items:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+              checked:
+                type: boolean
+        attachments:
+          type: array
+          items:
+            type: string
+            description: URL of an already-uploaded file
+        label_ids:
+          type: array
+          items:
+            type: string
+
+    NoteUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        content_text:
+          type: string
+          nullable: true
+        color:
+          type: string
+          nullable: true
+        bg_image:
+          type: string
+          nullable: true
+        pinned:
+          type: boolean
+        archived:
+          type: boolean
+        position:
+          type: integer
+        reminder_at:
+          type: string
+          format: date-time
+          nullable: true
+        label_ids:
+          type: array
+          items:
+            type: string
+        checklist_items:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+              checked:
+                type: boolean
+
+    NoteVersion:
+      type: object
+      properties:
+        id:
+          type: string
+        note_id:
+          type: string
+        snapshot:
+          type: string
+          description: JSON-encoded note snapshot
+        char_delta:
+          type: integer
+        user_action:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    ChecklistItem:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        checked:
+          type: boolean
+        position:
+          type: integer
+
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+
+    Label:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        color:
+          type: string
+          nullable: true
+
+    Profile:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        avatar:
+          type: string
+          nullable: true
+          description: URL path to avatar image
+
+    AuthSettings:
+      type: object
+      properties:
+        auth_enabled:
+          type: boolean
+        auth_type:
+          type: string
+          enum: [password, pin]
+        has_password:
+          type: boolean
+        reset_email:
+          type: string
+          nullable: true
+        pin_length:
+          type: integer

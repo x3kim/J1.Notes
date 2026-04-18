@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import DOMPurify from 'isomorphic-dompurify';
 
 // Compute a simple text length from a note snapshot (content_text + title + checklist items)
 function getNoteTextLength(note: { title?: string | null; content_text?: string | null; checklist_items?: { text: string }[] }): number {
@@ -73,6 +74,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   try {
     const body = await request.json();
+    if (typeof body.content_text === 'string') {
+      body.content_text = DOMPurify.sanitize(body.content_text, { USE_PROFILES: { html: true } });
+    }
+    if (typeof body.title === 'string') {
+      body.title = body.title.slice(0, 500);
+    }
 
     // 1. Snapshot der aktuellen Notiz machen BEVOR wir sie ändern (nur bei Inhaltsänderungen)
     const contentFields = ['title', 'content_text', 'checklist_items', 'labels', 'label_ids'];

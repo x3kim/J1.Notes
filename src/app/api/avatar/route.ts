@@ -24,29 +24,40 @@ export async function POST(request: Request) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const ext = file.name.split('.').pop() ?? 'jpg';
+  const ext = file.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') ?? 'jpg';
   const uniqueName = `avatar-${Date.now()}.${ext}`;
 
-  const avatarDir = path.join(process.cwd(), 'public', 'avatars');
+  // Store inside /uploads so the existing Docker volume keeps avatars persistent
+  const uploadDir = path.join(process.cwd(), 'public', 'uploads');
   try {
-    await mkdir(avatarDir, { recursive: true });
+    await mkdir(uploadDir, { recursive: true });
   } catch (_) {}
 
-  await writeFile(path.join(avatarDir, uniqueName), buffer);
+  await writeFile(path.join(uploadDir, uniqueName), buffer);
 
-  return NextResponse.json({ url: `/avatars/${uniqueName}` });
+  return NextResponse.json({ url: `/uploads/${uniqueName}` });
 }
 
 export async function DELETE(request: Request) {
-  const url = new URL(request.url).searchParams.get('file');
-  if (!url) return NextResponse.json({ success: false });
+  const fileParam = new URL(request.url).searchParams.get('file');
+  if (!fileParam) return NextResponse.json({ success: false });
 
   try {
-    const fileName = url.split('/').pop();
-    if (fileName && fileName.startsWith('avatar-')) {
-      const filePath = path.join(process.cwd(), 'public', 'avatars', fileName);
-      await unlink(filePath);
+    const fileName = path.basename(fileParam.split('?')[0]);
+    // Only delete files that look like avatars and stay within uploads dir
+    if (!fileName || !fileName.startsWith('avatar-')) {
+      return NextResponse.json({ success: false, error: 'Invalid file' });
     }
+
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+    const filePath = path.resolve(path.join(uploadDir, fileName));
+    const resolvedDir = path.resolve(uploadDir);
+
+    if (!filePath.startsWith(resolvedDir + path.sep)) {
+      return NextResponse.json({ success: false, error: 'Invalid path' });
+    }
+
+    await unlink(filePath);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ success: false });
