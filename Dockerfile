@@ -3,8 +3,9 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl python3 make g++
 WORKDIR /app
 COPY package.json package-lock.json ./
-# npm ci rebuilds native modules (e.g. better-sqlite3) from source for the target platform
-RUN npm ci --only=production && npm cache clean --force
+# Alle Deps (inkl. dev) — tailwindcss, postcss etc. werden zur Build-Zeit gebraucht.
+# npm ci kompiliert native Module (better-sqlite3) für die Zielplattform (Linux/Alpine) neu.
+RUN npm ci && npm cache clean --force
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
