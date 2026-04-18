@@ -1,0 +1,100 @@
+{
+  "placeholders": {
+    "takeANote": "Prendre une note...",
+    "title": "Titre",
+    "listItem": "Élément de liste...",
+    "addListItem": "Ajouter un élément",
+    "search": "Rechercher",
+    "noteInTrashInfo": "Les notes dans la corbeille sont supprimées après 7 jours.",
+    "emptyTrash": "Vider la corbeille",
+    "trashEmptied": "Corbeille vidée",
+    "confirmEmptyTrash": "Vider vraiment la corbeille ?"
+  },
+  "tooltips": {
+    "newList": "Nouvelle liste",
+    "newNoteWithDrawing": "Nouvelle note avec dessin",
+    "newNoteWithImage": "Nouvelle note avec image",
+    "addImage": "Ajouter une image",
+    "textMode": "Mode texte",
+    "listMode": "Mode liste",
+    "formatting": "Mise en forme",
+    "formattingTextOnly": "Mise en forme (mode texte uniquement)",
+    "backgroundImage": "Image de fond",
+    "uploadOwnImage": "Télécharger sa propre image",
+    "default": "Par défaut",
+    "draw": "Dessiner",
+    "reminder": "Rappel",
+    "viewHistory": "Voir l'historique des versions",
+    "export": "Exporter la note en Markdown",
+    "duplicate": "Dupliquer la note",
+    "archive": "Archiver la note",
+    "openFullscreen": "Ouvrir en plein écran"
+  },
+  "editor": {
+    "noLabelsYet": "Aucune étiquette pour l'instant.",
+    "headingPrefix": "H",
+    "bullet": "• Liste",
+    "ordered": "1. Liste",
+    "link": "Lien",
+    "linkPrompt": "URL :",
+    "paragraph": "P",
+    "heading": "Titre",
+    "textColor": "Couleur du texte",
+    "highlight": "Surligner",
+    "clearFormatting": "Effacer la mise en forme"
+  },
+  "labels": {
+    "editTitle": "Modifier les étiquettes",
+    "createNew": "Créer une nouvelle étiquette"
+  },
+  "reminders": {
+    "title": "Rappel",
+    "set": "Définir un rappel :",
+    "delete": "Supprimer",
+    "notificationPrefix": "Rappel :",
+    "untitled": "Note sans titre",
+    "tooltip": "Rappel : {{date}}"
+  },
+  "drawing": {
+    "title": "Dessiner",
+    "eraser": "Gomme",
+    "saveAsNote": "Enregistrer comme note",
+    "savingDrawingError": "Erreur lors de l'enregistrement du dessin"
+  },
+  "statuses": {
+    "inTrash": "Note dans la corbeille • ",
+    "inArchive": "Note dans l'archive • ",
+    "editedAt": "Modifié : {{date}}",
+    "history": "Historique"
+  },
+  "versions": {
+    "title": "Historique des versions",
+    "none": "Aucune version précédente trouvée.",
+    "entries": "versions",
+    "latest": "dernière",
+    "chars": "caractères",
+    "restore": "Restaurer cette version",
+    "restoring": "Restauration en cours...",
+    "restored": "Version restaurée avec succès",
+    "restoreError": "Erreur lors de la restauration",
+    "confirmRestore": "Restaurer cette version ? Le contenu actuel sera sauvegardé comme une nouvelle entrée d'historique.",
+    "noPreview": "[Liste / Pas d'aperçu]",
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {{count}} min",
+    "hoursAgo": "Il y a {{count}} h",
+    "yesterday": "Hier",
+    "daysAgo": "Il y a {{count}} jours",
+    "actionEdit": "modifié",
+    "actionRestore": "restauré",
+    "actionPreRestore": "avant restauration",
+    "actionLabelChange": "changement d'étiquette",
+    "viewDiff": "Voir le diff"
+  },
+  "toasts": {
+    "deleting": "Suppression...",
+    "deleted": "Note supprimée",
+    "deleteError": "Erreur lors de la suppression",
+    "saveError": "Erreur lors de l'enregistrement",
+    "duplicated": "Note dupliquée"
+  }
+}

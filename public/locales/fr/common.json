@@ -1,0 +1,34 @@
+{
+  "app": {
+    "name": "gNotes",
+    "description": "Application de notes auto-hébergée"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "delete": "Supprimer",
+    "duplicate": "Dupliquer",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "edit": "Modifier",
+    "done": "Terminé",
+    "ok": "OK",
+    "open": "Ouvrir",
+    "refresh": "Actualiser",
+    "search": "Rechercher",
+    "saving": "Enregistrement...",
+    "savingAsNote": "Enregistrement comme note...",
+    "back": "Retour"
+  },
+  "navigation": {
+    "notes": "Notes",
+    "archive": "Archive",
+    "trash": "Corbeille",
+    "editLabels": "Modifier les étiquettes"
+  },
+  "sections": {
+    "pinned": "ÉPINGLÉES",
+    "others": "AUTRES"
+  }
+}

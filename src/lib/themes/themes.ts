@@ -1,0 +1,178 @@
+export type ThemeId = 'light' | 'dark' | 'dracula' | 'cappuccino' | 'solarized' | 'nord';
+
+export interface Theme {
+  id: ThemeId;
+  name: string;
+  /** CSS variable values applied to :root when this theme is active */
+  vars: Record<string, string>;
+  /** Whether this is a dark-style theme (drives Tailwind `dark` class) */
+  isDark: boolean;
+  /** Preview swatch colors [bg, primary, accent] */
+  preview: [string, string, string];
+}
+
+export const THEMES: Theme[] = [
+  {
+    id: 'light',
+    name: 'Light',
+    isDark: false,
+    preview: ['#ffffff', '#f3f4f6', '#fbbc04'],
+    vars: {
+      '--theme-bg':          '#ffffff',
+      '--theme-bg-secondary':'#f3f4f6',
+      '--theme-bg-tertiary': '#e5e7eb',
+      '--theme-surface':     '#ffffff',
+      '--theme-surface-alt': '#f9fafb',
+      '--theme-border':      '#e5e7eb',
+      '--theme-border-strong':'#d1d5db',
+      '--theme-text':        '#111827',
+      '--theme-text-muted':  '#6b7280',
+      '--theme-text-subtle': '#9ca3af',
+      '--theme-accent':      '#fbbc04',
+      '--theme-accent-hover':'#f59e0b',
+      '--theme-accent-muted':'rgba(251,188,4,0.15)',
+      '--theme-hover':       'rgba(0,0,0,0.05)',
+      '--theme-selected':    'rgba(65,51,28,0.12)',
+      '--theme-selected-text':'#92400e',
+      '--theme-input-bg':    '#f3f4f6',
+      '--theme-shadow':      '0 1px 3px rgba(0,0,0,0.12)',
+    },
+  },
+  {
+    id: 'dark',
+    name: 'Dark',
+    isDark: true,
+    preview: ['#202124', '#303134', '#fbbc04'],
+    vars: {
+      '--theme-bg':          '#202124',
+      '--theme-bg-secondary':'#303134',
+      '--theme-bg-tertiary': '#3c3f43',
+      '--theme-surface':     '#202124',
+      '--theme-surface-alt': '#28292c',
+      '--theme-border':      '#5f6368',
+      '--theme-border-strong':'#80868b',
+      '--theme-text':        '#e8eaed',
+      '--theme-text-muted':  '#9aa0a6',
+      '--theme-text-subtle': '#80868b',
+      '--theme-accent':      '#fbbc04',
+      '--theme-accent-hover':'#f59e0b',
+      '--theme-accent-muted':'rgba(251,188,4,0.15)',
+      '--theme-hover':       'rgba(255,255,255,0.08)',
+      '--theme-selected':    '#41331c',
+      '--theme-selected-text':'#fbbc04',
+      '--theme-input-bg':    '#525355',
+      '--theme-shadow':      '0 1px 3px rgba(0,0,0,0.4)',
+    },
+  },
+  {
+    id: 'dracula',
+    name: 'Dracula',
+    isDark: true,
+    preview: ['#282a36', '#44475a', '#bd93f9'],
+    vars: {
+      '--theme-bg':          '#282a36',
+      '--theme-bg-secondary':'#343746',
+      '--theme-bg-tertiary': '#44475a',
+      '--theme-surface':     '#282a36',
+      '--theme-surface-alt': '#21222c',
+      '--theme-border':      '#44475a',
+      '--theme-border-strong':'#6272a4',
+      '--theme-text':        '#f8f8f2',
+      '--theme-text-muted':  '#6272a4',
+      '--theme-text-subtle': '#565f89',
+      '--theme-accent':      '#bd93f9',
+      '--theme-accent-hover':'#a57cf5',
+      '--theme-accent-muted':'rgba(189,147,249,0.15)',
+      '--theme-hover':       'rgba(255,255,255,0.07)',
+      '--theme-selected':    'rgba(189,147,249,0.2)',
+      '--theme-selected-text':'#bd93f9',
+      '--theme-input-bg':    '#44475a',
+      '--theme-shadow':      '0 1px 3px rgba(0,0,0,0.5)',
+    },
+  },
+  {
+    id: 'cappuccino',
+    name: 'Cappuccino',
+    isDark: true,
+    preview: ['#2d1f17', '#3d2b1f', '#c98f5a'],
+    vars: {
+      '--theme-bg':          '#2d1f17',
+      '--theme-bg-secondary':'#3d2b1f',
+      '--theme-bg-tertiary': '#4e3828',
+      '--theme-surface':     '#2d1f17',
+      '--theme-surface-alt': '#261a13',
+      '--theme-border':      '#5a3f2e',
+      '--theme-border-strong':'#7a5740',
+      '--theme-text':        '#f5e6d3',
+      '--theme-text-muted':  '#c4a882',
+      '--theme-text-subtle': '#a08060',
+      '--theme-accent':      '#c98f5a',
+      '--theme-accent-hover':'#e0a060',
+      '--theme-accent-muted':'rgba(201,143,90,0.2)',
+      '--theme-hover':       'rgba(255,255,255,0.06)',
+      '--theme-selected':    'rgba(201,143,90,0.25)',
+      '--theme-selected-text':'#e0a060',
+      '--theme-input-bg':    '#4e3828',
+      '--theme-shadow':      '0 1px 3px rgba(0,0,0,0.5)',
+    },
+  },
+  {
+    id: 'solarized',
+    name: 'Solarized',
+    isDark: true,
+    preview: ['#002b36', '#073642', '#cb4b16'],
+    vars: {
+      '--theme-bg':          '#002b36',
+      '--theme-bg-secondary':'#073642',
+      '--theme-bg-tertiary': '#094252',
+      '--theme-surface':     '#002b36',
+      '--theme-surface-alt': '#00232e',
+      '--theme-border':      '#073642',
+      '--theme-border-strong':'#586e75',
+      '--theme-text':        '#839496',
+      '--theme-text-muted':  '#657b83',
+      '--theme-text-subtle': '#586e75',
+      '--theme-accent':      '#cb4b16',
+      '--theme-accent-hover':'#dc6030',
+      '--theme-accent-muted':'rgba(203,75,22,0.2)',
+      '--theme-hover':       'rgba(255,255,255,0.05)',
+      '--theme-selected':    'rgba(203,75,22,0.2)',
+      '--theme-selected-text':'#cb4b16',
+      '--theme-input-bg':    '#073642',
+      '--theme-shadow':      '0 1px 3px rgba(0,0,0,0.5)',
+    },
+  },
+  {
+    id: 'nord',
+    name: 'Nord',
+    isDark: true,
+    preview: ['#2e3440', '#3b4252', '#88c0d0'],
+    vars: {
+      '--theme-bg':          '#2e3440',
+      '--theme-bg-secondary':'#3b4252',
+      '--theme-bg-tertiary': '#434c5e',
+      '--theme-surface':     '#2e3440',
+      '--theme-surface-alt': '#272c36',
+      '--theme-border':      '#4c566a',
+      '--theme-border-strong':'#5e81ac',
+      '--theme-text':        '#eceff4',
+      '--theme-text-muted':  '#d8dee9',
+      '--theme-text-subtle': '#adb5c5',
+      '--theme-accent':      '#88c0d0',
+      '--theme-accent-hover':'#81b5c6',
+      '--theme-accent-muted':'rgba(136,192,208,0.15)',
+      '--theme-hover':       'rgba(255,255,255,0.06)',
+      '--theme-selected':    'rgba(136,192,208,0.2)',
+      '--theme-selected-text':'#88c0d0',
+      '--theme-input-bg':    '#434c5e',
+      '--theme-shadow':      '0 1px 3px rgba(0,0,0,0.4)',
+    },
+  },
+];
+
+export const DEFAULT_THEME: ThemeId = 'dark';
+export const THEME_STORAGE_KEY = 'gnotes-theme';
+
+export function getTheme(id: ThemeId): Theme {
+  return THEMES.find(t => t.id === id) ?? THEMES[1]; // fallback to dark
+}

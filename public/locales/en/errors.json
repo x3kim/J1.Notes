@@ -1,0 +1,7 @@
+{
+  "generic": "An error occurred",
+  "saveFailed": "Error saving",
+  "deleteFailed": "Error deleting",
+  "uploadFailed": "Error uploading file",
+  "notFound": "Not found"
+}

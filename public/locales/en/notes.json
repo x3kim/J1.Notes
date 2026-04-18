@@ -1,0 +1,100 @@
+{
+  "placeholders": {
+    "takeANote": "Take a note...",
+    "title": "Title",
+    "listItem": "List item...",
+    "addListItem": "Add list item",
+    "search": "Search",
+    "noteInTrashInfo": "Notes in trash are deleted after 7 days.",
+    "emptyTrash": "Empty trash",
+    "trashEmptied": "Trash emptied",
+    "confirmEmptyTrash": "Really empty trash?"
+  },
+  "tooltips": {
+    "newList": "New list",
+    "newNoteWithDrawing": "New note with drawing",
+    "newNoteWithImage": "New note with image",
+    "addImage": "Add image",
+    "textMode": "Text mode",
+    "listMode": "List mode",
+    "formatting": "Formatting",
+    "formattingTextOnly": "Formatting (text mode only)",
+    "backgroundImage": "Background image",
+    "uploadOwnImage": "Upload own image",
+    "default": "Default",
+    "draw": "Draw",
+    "reminder": "Reminder",
+    "viewHistory": "View version history",
+    "export": "Export note as Markdown",
+    "duplicate": "Duplicate note",
+    "archive": "Archive note",
+    "openFullscreen": "Open fullscreen"
+  },
+  "editor": {
+    "noLabelsYet": "No labels yet.",
+    "headingPrefix": "H",
+    "bullet": "• List",
+    "ordered": "1. List",
+    "link": "Link",
+    "linkPrompt": "URL:",
+    "paragraph": "P",
+    "heading": "Heading",
+    "textColor": "Text color",
+    "highlight": "Highlight",
+    "clearFormatting": "Clear formatting"
+  },
+  "labels": {
+    "editTitle": "Edit labels",
+    "createNew": "Create new label"
+  },
+  "reminders": {
+    "title": "Reminder",
+    "set": "Set reminder:",
+    "delete": "Delete",
+    "notificationPrefix": "Reminder:",
+    "untitled": "Untitled note",
+    "tooltip": "Reminder: {{date}}"
+  },
+  "drawing": {
+    "title": "Draw",
+    "eraser": "Eraser",
+    "saveAsNote": "Save as note",
+    "savingDrawingError": "Error saving drawing"
+  },
+  "statuses": {
+    "inTrash": "Note in trash \u2022 ",
+    "inArchive": "Note in archive \u2022 ",
+    "editedAt": "Edited: {{date}}",
+    "history": "History"
+  },
+  "versions": {
+    "title": "Version history",
+    "none": "No previous versions found.",
+    "entries": "versions",
+    "latest": "latest",
+    "chars": "chars",
+    "restore": "Restore this version",
+    "restoring": "Restoring...",
+    "restored": "Version restored successfully",
+    "restoreError": "Error restoring version",
+    "confirmRestore": "Restore this version? The current content will be saved as a new history entry.",
+    "noPreview": "[Checklist / No preview]",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} hr ago",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{count}} days ago",
+    "actionEdit": "edit",
+    "actionRestore": "restored",
+    "actionPreRestore": "before restore",
+    "actionLabelChange": "label change",
+    "viewDiff": "View diff"
+  },
+  "toasts": {
+    "deleting": "Deleting...",
+    "deleted": "Note deleted",
+    "deleteError": "Error deleting",
+    "saveError": "Error saving",
+    "duplicated": "Note duplicated"
+  }
+}

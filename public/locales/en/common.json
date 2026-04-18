@@ -1,0 +1,35 @@
+{
+  "app": {
+    "name": "gNotes",
+    "description": "Self-hosted Notes App"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "duplicate": "Duplicate",
+    "archive": "Archive",
+    "restore": "Restore",
+    "edit": "Edit",
+    "done": "Done",
+    "ok": "OK",
+    "open": "Open",
+    "refresh": "Refresh",
+    "search": "Search",
+    "saving": "Saving...",
+    "savingAsNote": "Saving as note...",
+    "back": "Back",
+    "more": "More actions"
+  },
+  "navigation": {
+    "notes": "Notes",
+    "archive": "Archive",
+    "trash": "Trash",
+    "editLabels": "Edit labels"
+  },
+  "sections": {
+    "pinned": "PINNED",
+    "others": "OTHERS"
+  }
+}

@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// PostgreSQL Schema - wird im Docker-Build mit DATABASE_PROVIDER=postgresql verwendet
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  name          String?
+  notes         Note[]
+}
+
+model AppSettings {
+  id            String  @id @default("singleton")
+  auth_enabled  Boolean @default(false)
+  auth_type     String  @default("password")
+  password_hash String?
+  username      String?
+  avatar        String?
+  reset_email   String?
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid())
+  token_hash String   @unique
+  email      String
+  expires_at DateTime
+  used       Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  @@index([email])
+  @@index([expires_at])
+}
+
+model Label {
+  id    String @id @default(uuid())
+  name  String @unique
+  notes Note[]
+}
+
+model Attachment {
+  id      String @id @default(uuid())
+  url     String
+  note_id String
+  note    Note   @relation(fields: [note_id], references: [id], onDelete: Cascade)
+}
+
+model Note {
+  id                String          @id @default(uuid())
+  title             String
+  content_text      String?
+  color             String?
+  bg_image          String?
+  position          Float           @default(0)
+  pinned            Boolean         @default(false)
+  archived          Boolean         @default(false)
+  deleted_at        DateTime?
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+  reminder_at       DateTime?
+  owner_id          String
+  owner             User            @relation(fields: [owner_id], references: [id])
+  checklist_items   ChecklistItem[]
+  labels            Label[]
+  attachments       Attachment[]
+  versions          NoteVersion[]
+}
+
+model NoteVersion {
+  id          String   @id @default(uuid())
+  note_id     String
+  note        Note     @relation(fields: [note_id], references: [id], onDelete: Cascade)
+  snapshot    String
+  user_action String   @default("edit")
+  char_delta  Int      @default(0)
+  created_at  DateTime @default(now())
+}
+
+model ChecklistItem {
+  id      String  @id @default(uuid())
+  text    String
+  checked Boolean @default(false)
+  note_id String
+  note    Note    @relation(fields: [note_id], references: [id], onDelete: Cascade)
+}

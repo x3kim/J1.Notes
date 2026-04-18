@@ -1,0 +1,100 @@
+{
+  "placeholders": {
+    "takeANote": "Notiz schreiben...",
+    "title": "Titel",
+    "listItem": "Listeneintrag...",
+    "addListItem": "Listeneintrag hinzuf\u00fcgen",
+    "search": "Suchen",
+    "noteInTrashInfo": "Notizen im Papierkorb werden nach 7 Tagen gel\u00f6scht.",
+    "emptyTrash": "Papierkorb leeren",
+    "trashEmptied": "Papierkorb geleert",
+    "confirmEmptyTrash": "Papierkorb wirklich leeren?"
+  },
+  "tooltips": {
+    "newList": "Neue Liste",
+    "newNoteWithDrawing": "Neue Notiz mit Zeichnung",
+    "newNoteWithImage": "Neue Notiz mit Bild",
+    "addImage": "Bild hinzuf\u00fcgen",
+    "textMode": "Textmodus",
+    "listMode": "Listenmodus",
+    "formatting": "Formatierung",
+    "formattingTextOnly": "Formatierung (nur im Textmodus)",
+    "backgroundImage": "Hintergrundbild",
+    "uploadOwnImage": "Eigenes Bild hochladen",
+    "default": "Standard",
+    "draw": "Zeichnen",
+    "reminder": "Erinnerung",
+    "viewHistory": "Versionsverlauf ansehen",
+    "export": "Notiz als Markdown exportieren",
+    "duplicate": "Notiz duplizieren",
+    "archive": "Notiz archivieren",
+    "openFullscreen": "Vollbild \u00f6ffnen"
+  },
+  "editor": {
+    "noLabelsYet": "Keine Labels vorhanden.",
+    "headingPrefix": "H",
+    "bullet": "• Liste",
+    "ordered": "1. Liste",
+    "link": "Link",
+    "linkPrompt": "URL:",
+    "paragraph": "P",
+    "heading": "Überschrift",
+    "textColor": "Textfarbe",
+    "highlight": "Hervorheben",
+    "clearFormatting": "Formatierung entfernen"
+  },
+  "labels": {
+    "editTitle": "Labels bearbeiten",
+    "createNew": "Neues Label erstellen"
+  },
+  "reminders": {
+    "title": "Erinnerung",
+    "set": "Erinnerung setzen:",
+    "delete": "L\u00f6schen",
+    "notificationPrefix": "Erinnerung:",
+    "untitled": "Unbenannte Notiz",
+    "tooltip": "Erinnerung: {{date}}"
+  },
+  "drawing": {
+    "title": "Zeichnen",
+    "eraser": "Radierer",
+    "saveAsNote": "Als Notiz speichern",
+    "savingDrawingError": "Fehler beim Speichern der Zeichnung"
+  },
+  "statuses": {
+    "inTrash": "Notiz im Papierkorb \u2022 ",
+    "inArchive": "Notiz im Archiv \u2022 ",
+    "editedAt": "Bearbeitet: {{date}}",
+    "history": "Historie"
+  },
+  "versions": {
+    "title": "Versionsverlauf",
+    "none": "Keine vorherigen Versionen gefunden.",
+    "entries": "Versionen",
+    "latest": "neueste",
+    "chars": "Zeichen",
+    "restore": "Diese Version wiederherstellen",
+    "restoring": "Wird wiederhergestellt...",
+    "restored": "Version erfolgreich wiederhergestellt",
+    "restoreError": "Fehler beim Wiederherstellen",
+    "confirmRestore": "Diese Version wiederherstellen? Der aktuelle Inhalt wird als neuer Verlaufseintrag gespeichert.",
+    "noPreview": "[Checkliste / Keine Vorschau]",
+    "justNow": "Gerade eben",
+    "minutesAgo": "Vor {{count}} Min.",
+    "hoursAgo": "Vor {{count}} Std.",
+    "yesterday": "Gestern",
+    "daysAgo": "Vor {{count}} Tagen",
+    "actionEdit": "bearbeitet",
+    "actionRestore": "wiederhergestellt",
+    "actionPreRestore": "vor Wiederherstellung",
+    "actionLabelChange": "Label-Änderung",
+    "viewDiff": "Diff anzeigen"
+  },
+  "toasts": {
+    "deleting": "Wird gel\u00f6scht...",
+    "deleted": "Notiz gel\u00f6scht",
+    "deleteError": "Fehler beim L\u00f6schen",
+    "saveError": "Fehler beim Speichern",
+    "duplicated": "Notiz dupliziert"
+  }
+}

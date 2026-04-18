@@ -1,0 +1,35 @@
+{
+  "app": {
+    "name": "gNotes",
+    "description": "Selbst-gehostete Notizen-App"
+  },
+  "actions": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "close": "Schlie\u00dfen",
+    "delete": "L\u00f6schen",
+    "duplicate": "Duplizieren",
+    "archive": "Archivieren",
+    "restore": "Wiederherstellen",
+    "edit": "Bearbeiten",
+    "done": "Fertig",
+    "ok": "OK",
+    "open": "\u00d6ffnen",
+    "refresh": "Aktualisieren",
+    "search": "Suchen",
+    "saving": "Wird gespeichert...",
+    "savingAsNote": "Wird als Notiz gespeichert...",
+    "back": "Zurück",
+    "more": "Weitere Aktionen"
+  },
+  "navigation": {
+    "notes": "Notizen",
+    "archive": "Archiv",
+    "trash": "Papierkorb",
+    "editLabels": "Labels bearbeiten"
+  },
+  "sections": {
+    "pinned": "ANGEPINNT",
+    "others": "ANDERE"
+  }
+}

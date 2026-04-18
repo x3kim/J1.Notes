@@ -1,0 +1,26 @@
+{
+  "name": "gNotes — Self-hosted Notes",
+  "short_name": "gNotes",
+  "description": "Self-hosted Google Keep Alternative",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#202124",
+  "theme_color": "#fbbc04",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Neue Notiz",
+      "url": "/",
+      "description": "Neue Notiz erstellen"
+    }
+  ]
+}
