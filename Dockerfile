@@ -30,6 +30,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL=file:/data/j1notes.db
 RUN npm run build
 
+# Dev-Deps entfernen, node_modules werden im Runner-Stage komplett übernommen
+RUN npm prune --omit=dev
+
 # Stage 3: Runner
 FROM node:20-alpine AS runner
 RUN apk add --no-cache openssl
@@ -47,12 +50,11 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
-# better-sqlite3 nativen Addon für die Zielplattform kopieren
-COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
-COPY --from=builder /app/node_modules/@prisma/adapter-better-sqlite3 ./node_modules/@prisma/adapter-better-sqlite3
+# Komplette node_modules aus dem builder — enthält Prisma CLI, better-sqlite3 (Linux-Binary),
+# generierte Prisma-Client-Dateien und alle transitiven Abhängigkeiten.
+# Nach dem Build wurden dev-Deps via npm prune entfernt, bleibt also schlank.
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
 # Uploads-Verzeichnis erstellen (persistiert via Docker Volume)
 RUN mkdir -p /app/public/uploads && chown nextjs:nodejs /app/public/uploads
