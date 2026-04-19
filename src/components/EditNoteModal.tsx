@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Plus, Trash2, RotateCcw, History, GripVertical, Pencil } from 'lucide-react';
+import { X, Plus, Trash2, RotateCcw, History, GripVertical, Pencil, ChevronDown } from 'lucide-react';
 import NoteActionBar from './NoteActionBar';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -39,6 +39,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
     note.reminder_at ? new Date(note.reminder_at).toISOString().slice(0, 16) : ''
   );
   const [dragListIdx, setDragListIdx] = useState<number | null>(null);
+  const [completedCollapsed, setCompletedCollapsed] = useState(true);
 
   const isTrash = note.deleted_at !== null;
   const isArchive = note.archived === true;
@@ -456,7 +457,8 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
           </>
         ) : (
           <div className="p-4 space-y-1 max-h-[50vh] overflow-y-auto">
-            {listItems.map((item, index) => (
+            {/* Unchecked items */}
+            {listItems.map((item, index) => !item.checked && (
               <div
                 key={index}
                 draggable={!isTrash}
@@ -489,7 +491,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
                   type="text"
                   value={item.text}
                   onChange={e => { const newI = [...listItems]; newI[index].text = e.target.value; setListItems(newI); }}
-                  className={`flex-1 bg-transparent outline-none placeholder-gray-500 py-1 ${item.checked ? 'line-through opacity-50' : ''}`}
+                  className="flex-1 bg-transparent outline-none placeholder-gray-500 py-1"
                   style={{ color: 'var(--theme-text)' }}
                 />
                 {!isTrash && (
@@ -503,6 +505,63 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
                 )}
               </div>
             ))}
+
+            {/* Completed items — collapsible section */}
+            {listItems.some(i => i.checked) && (
+              <>
+                <button
+                  onClick={() => setCompletedCollapsed(c => !c)}
+                  className="flex items-center gap-2 text-sm py-2 px-1 w-full rounded-lg transition-colors"
+                  style={{ color: 'var(--theme-text-muted)' }}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--theme-hover)')}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${completedCollapsed ? '-rotate-90' : ''}`}
+                  />
+                  {listItems.filter(i => i.checked).length} {t('notes:checklist.completedItems')}
+                </button>
+
+                {!completedCollapsed && listItems.map((item, index) => item.checked && (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 group rounded-lg px-1 transition-colors"
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--theme-hover)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
+                  >
+                    {!isTrash && (
+                      <GripVertical size={14} className="opacity-0 group-hover:opacity-100 cursor-grab shrink-0" style={{ color: 'var(--theme-text-muted)' }} />
+                    )}
+                    <input
+                      disabled={isTrash}
+                      type="checkbox"
+                      checked={item.checked}
+                      onChange={e => { const newI = [...listItems]; newI[index].checked = e.target.checked; setListItems(newI); }}
+                      className="w-4 h-4 cursor-pointer shrink-0"
+                    />
+                    <input
+                      disabled={isTrash}
+                      type="text"
+                      value={item.text}
+                      onChange={e => { const newI = [...listItems]; newI[index].text = e.target.value; setListItems(newI); }}
+                      className="flex-1 bg-transparent outline-none placeholder-gray-500 py-1 line-through opacity-50"
+                      style={{ color: 'var(--theme-text)' }}
+                    />
+                    {!isTrash && (
+                      <button
+                        onClick={() => setListItems(listItems.filter((_, i) => i !== index))}
+                        className="opacity-0 group-hover:opacity-100 shrink-0"
+                        style={{ color: 'var(--theme-text-muted)' }}
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </>
+            )}
+
             {!isTrash && (
               <button
                 onClick={() => setListItems([...listItems, { text: '', checked: false }])}

@@ -96,5 +96,8 @@
     "deleteError": "Erreur lors de la suppression",
     "saveError": "Erreur lors de l'enregistrement",
     "duplicated": "Note dupliquée"
+  },
+  "checklist": {
+    "completedItems": "terminé(s)"
   }
 }

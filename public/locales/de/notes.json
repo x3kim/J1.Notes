@@ -3,9 +3,9 @@
     "takeANote": "Notiz schreiben...",
     "title": "Titel",
     "listItem": "Listeneintrag...",
-    "addListItem": "Listeneintrag hinzuf\u00fcgen",
+    "addListItem": "Listeneintrag hinzufügen",
     "search": "Suchen",
-    "noteInTrashInfo": "Notizen im Papierkorb werden nach 7 Tagen gel\u00f6scht.",
+    "noteInTrashInfo": "Notizen im Papierkorb werden nach 7 Tagen gelöscht.",
     "emptyTrash": "Papierkorb leeren",
     "trashEmptied": "Papierkorb geleert",
     "confirmEmptyTrash": "Papierkorb wirklich leeren?"
@@ -14,7 +14,7 @@
     "newList": "Neue Liste",
     "newNoteWithDrawing": "Neue Notiz mit Zeichnung",
     "newNoteWithImage": "Neue Notiz mit Bild",
-    "addImage": "Bild hinzuf\u00fcgen",
+    "addImage": "Bild hinzufügen",
     "textMode": "Textmodus",
     "listMode": "Listenmodus",
     "formatting": "Formatierung",
@@ -28,7 +28,7 @@
     "export": "Notiz als Markdown exportieren",
     "duplicate": "Notiz duplizieren",
     "archive": "Notiz archivieren",
-    "openFullscreen": "Vollbild \u00f6ffnen"
+    "openFullscreen": "Vollbild öffnen"
   },
   "editor": {
     "noLabelsYet": "Keine Labels vorhanden.",
@@ -50,7 +50,7 @@
   "reminders": {
     "title": "Erinnerung",
     "set": "Erinnerung setzen:",
-    "delete": "L\u00f6schen",
+    "delete": "Löschen",
     "notificationPrefix": "Erinnerung:",
     "untitled": "Unbenannte Notiz",
     "tooltip": "Erinnerung: {{date}}"
@@ -62,8 +62,8 @@
     "savingDrawingError": "Fehler beim Speichern der Zeichnung"
   },
   "statuses": {
-    "inTrash": "Notiz im Papierkorb \u2022 ",
-    "inArchive": "Notiz im Archiv \u2022 ",
+    "inTrash": "Notiz im Papierkorb • ",
+    "inArchive": "Notiz im Archiv • ",
     "editedAt": "Bearbeitet: {{date}}",
     "history": "Historie"
   },
@@ -91,10 +91,13 @@
     "viewDiff": "Diff anzeigen"
   },
   "toasts": {
-    "deleting": "Wird gel\u00f6scht...",
-    "deleted": "Notiz gel\u00f6scht",
-    "deleteError": "Fehler beim L\u00f6schen",
+    "deleting": "Wird gelöscht...",
+    "deleted": "Notiz gelöscht",
+    "deleteError": "Fehler beim Löschen",
     "saveError": "Fehler beim Speichern",
     "duplicated": "Notiz dupliziert"
+  },
+  "checklist": {
+    "completedItems": "abgeschlossen"
   }
 }

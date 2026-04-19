@@ -96,5 +96,8 @@
     "deleteError": "Error deleting",
     "saveError": "Error saving",
     "duplicated": "Note duplicated"
+  },
+  "checklist": {
+    "completedItems": "completed"
   }
 }
