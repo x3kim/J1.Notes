@@ -39,6 +39,10 @@ J1.Notes is a self-hosted note-taking app inspired by Google Keep. It runs entir
 | 🐳 | **Docker-ready** | Single `docker compose up` deployment |
 | 🗄️ | **SQLite & PostgreSQL** | Choose your database backend |
 
+## Screenshot
+
+![J1.Notes Screenshot](images/screenshot.png)
+
 ## Quick Start
 
 ```bash
