@@ -63,10 +63,6 @@ function readInitialLocale(): SupportedLocale {
     if (stored && (SUPPORTED_LOCALES as readonly string[]).includes(stored)) {
       return stored as SupportedLocale;
     }
-    const navLang = window.navigator?.language?.slice(0, 2).toLowerCase();
-    if (navLang && (SUPPORTED_LOCALES as readonly string[]).includes(navLang)) {
-      return navLang as SupportedLocale;
-    }
   } catch {
     // localStorage unavailable — fall through
   }
