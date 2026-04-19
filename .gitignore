@@ -21,6 +21,7 @@ dist/
 
 # Uploads (user content, not tracked)
 public/uploads/*
+public/avatars/*
 !public/uploads/.gitkeep
 
 # Misc

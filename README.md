@@ -4,10 +4,8 @@
 
 **Self-hosted, privacy-first notes app — your data, your server.**
 
-[![Version](https://img.shields.io/badge/version-1.0.3-yellow.svg)](https://github.com/x3kim/J1.Notes/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org)
-[![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com)
+[![Version](https://img.shields.io/badge/version-1.0.3-yellow.svg)](https://github.com/x3kim/J1.Notes/releases) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org) [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com)
 
 </div>
 
