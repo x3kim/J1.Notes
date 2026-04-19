@@ -69,13 +69,14 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
         className={`group rounded-xl border shadow-sm mb-4 break-inside-avoid relative hover:shadow-lg transition-all cursor-pointer flex flex-col ${isDragTarget ? 'ring-2 scale-[1.02]' : ''}`}
         style={cardStyle}
       >
-        {/* Attachment image — full-height, with lightbox or drawing edit */}
+        {/* Attachment image — height capped so long images don't swallow the card */}
         {note.attachments && note.attachments.length > 0 && (
-          <div className="relative w-full rounded-t-xl overflow-hidden bg-black/5">
+          <div className="relative w-full rounded-t-xl overflow-hidden bg-black/5" style={{ maxHeight: '200px' }}>
             <img
               src={note.attachments[0].url}
               alt="Note Attachment"
-              className="w-full h-auto block"
+              className="w-full h-full object-cover block"
+              style={{ maxHeight: '200px' }}
             />
             <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {isDrawingUrl(note.attachments[0].url) && !isTrash && (
