@@ -4,7 +4,7 @@
 
 **Self-hosted, privacy-first notes app — your data, your server.**
 
-[![Version](https://img.shields.io/badge/version-1.0.3-yellow.svg)](https://github.com/x3kim/J1.Notes/releases)
+[![Version](https://img.shields.io/badge/version-1.0.0-yellow.svg)](https://github.com/x3kim/J1.Notes/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com)
@@ -95,7 +95,7 @@ All settings are passed as environment variables (or in a `.env` file):
 | `SMTP_USER` | — | SMTP login username |
 | `SMTP_PASS` | — | SMTP login password |
 | `SMTP_FROM` | `J1.Notes <no-reply@j1notes.local>` | From address for emails |
-| `NEXT_PUBLIC_GITHUB_URL` | — | Shown as GitHub link in the footer |
+| `NEXT_PUBLIC_GITHUB_URL` | `https://github.com/x3kim/J1.Notes` | GitHub link shown in the footer |
 
 ### Example `.env` for production
 
@@ -107,7 +107,7 @@ SMTP_PORT=587
 SMTP_USER=noreply@example.com
 SMTP_PASS=secret
 SMTP_FROM=J1.Notes <noreply@example.com>
-NEXT_PUBLIC_GITHUB_URL=https://github.com/x3kim/J1.Notes
+# NEXT_PUBLIC_GITHUB_URL=https://github.com/x3kim/J1.Notes  # optional, has a default
 ```
 
 ## API Documentation
