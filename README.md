@@ -6,11 +6,9 @@
 
 **Self-hosted, privacy-first notes — your data, your server.**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/x3kim/J1.Notes/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org)
-[![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/x3kim/J1.Notes/releases) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org) [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org)
+
+![J1.Notes Screenshot](images/screenshot.png)
 
 </div>
 
@@ -38,10 +36,6 @@ J1.Notes is a self-hosted note-taking app inspired by Google Keep. It runs entir
 | 📄 | **REST API** | Full OpenAPI 3 spec, Swagger UI at `/api/docs` |
 | 🐳 | **Docker-ready** | Single `docker compose up` deployment |
 | 🗄️ | **SQLite & PostgreSQL** | Choose your database backend |
-
-## Screenshot
-
-![J1.Notes Screenshot](images/screenshot.png)
 
 ## Quick Start
 
