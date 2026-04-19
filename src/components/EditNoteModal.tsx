@@ -458,9 +458,12 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
         ) : (
           <div className="p-4 space-y-1 max-h-[50vh] overflow-y-auto">
             {/* Unchecked items */}
-            {listItems.map((item, index) => !item.checked && (
+            {listItems
+              .map((item, index) => ({ item, index }))
+              .filter(({ item }) => !item.checked)
+              .map(({ item, index }) => (
               <div
-                key={index}
+                key={item.id ?? index}
                 draggable={!isTrash}
                 onDragStart={() => setDragListIdx(index)}
                 onDragOver={e => e.preventDefault()}
@@ -523,9 +526,12 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
                   {listItems.filter(i => i.checked).length} {t('notes:checklist.completedItems')}
                 </button>
 
-                {!completedCollapsed && listItems.map((item, index) => item.checked && (
+                {!completedCollapsed && listItems
+                  .map((item, index) => ({ item, index }))
+                  .filter(({ item }) => item.checked)
+                  .map(({ item, index }) => (
                   <div
-                    key={index}
+                    key={item.id ?? index}
                     className="flex items-center gap-2 group rounded-lg px-1 transition-colors"
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--theme-hover)'; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}

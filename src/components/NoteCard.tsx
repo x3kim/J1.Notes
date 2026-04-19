@@ -58,7 +58,7 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
 
   const CHECKLIST_PREVIEW_LIMIT = 5;
   const visibleItems = note.checklist_items?.slice(0, CHECKLIST_PREVIEW_LIMIT) ?? [];
-  const hiddenCount = (note.checklist_items?.length ?? 0) - CHECKLIST_PREVIEW_LIMIT;
+  const hiddenCount = Math.max(0, (note.checklist_items?.length ?? 0) - CHECKLIST_PREVIEW_LIMIT);
 
   return (
     <>
@@ -130,7 +130,7 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
         )}
 
         {/* Content area — capped height so cards don't overflow the viewport */}
-        <div className="px-4 pt-4 pb-2 overflow-hidden" style={{ maxHeight: '320px' }}>
+        <div className="px-4 pt-4 pb-2 overflow-hidden max-h-80">
           <h3 className="font-semibold text-lg mb-2 pr-8" style={{ color: 'var(--theme-text)' }}>{note.title}</h3>
 
           {note.content_text && (
