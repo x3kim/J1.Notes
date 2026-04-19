@@ -2,12 +2,8 @@ import { Server } from '@hocuspocus/server'
 
 const port = parseInt(process.env.PORT ?? '1234')
 
-const server = Server.configure({
-  port,
-  async onConnect() {
-    // All connections allowed — access control is handled by the Next.js app
-  },
-})
+const server = new Server({ port })
 
-server.listen()
-console.log(`[collab] Hocuspocus läuft auf Port ${port}`)
+server.listen(port, () => {
+  console.log(`[collab] Hocuspocus läuft auf Port ${port}`)
+})
