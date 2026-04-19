@@ -1,9 +1,11 @@
 'use client';
 import { Github } from 'lucide-react';
 
+import pkg from '../../package.json';
+
 const GITHUB_URL =
   process.env.NEXT_PUBLIC_GITHUB_URL?.trim() || 'https://github.com/x3kim/J1.Notes';
-const VERSION = 'v1.0.0';
+const VERSION = `v${pkg.version}`;
 
 export default function Footer() {
   return (

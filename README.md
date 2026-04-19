@@ -6,11 +6,9 @@
 
 **Self-hosted, privacy-first notes — your data, your server.**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/x3kim/J1.Notes/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org)
-[![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/x3kim/J1.Notes/releases) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org) [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org)
+
+![J1.Notes Screenshot](images/screenshot.png)
 
 </div>
 
@@ -23,7 +21,8 @@ J1.Notes is a self-hosted note-taking app inspired by Google Keep. It runs entir
 | | Feature | Description |
 |---|---|---|
 | ✏️ | **Rich text editor** | Bold, italic, underline, highlights, links, text color, alignment |
-| ✅ | **Checklists** | Drag-and-drop reorderable to-do lists |
+| ✅ | **Checklists** | Collaborative to-do lists with live sync |
+| 👥 | **Live collaboration** | Multiple users edit the same note simultaneously — changes appear in real time |
 | 🎨 | **Drawing** | Freehand sketch pad per note |
 | 🖼️ | **Image attachments** | Attach photos and screenshots to notes |
 | 🏷️ | **Labels** | Color-coded tags for organizing notes |
@@ -38,10 +37,6 @@ J1.Notes is a self-hosted note-taking app inspired by Google Keep. It runs entir
 | 📄 | **REST API** | Full OpenAPI 3 spec, Swagger UI at `/api/docs` |
 | 🐳 | **Docker-ready** | Single `docker compose up` deployment |
 | 🗄️ | **SQLite & PostgreSQL** | Choose your database backend |
-
-## Screenshot
-
-![J1.Notes Screenshot](images/screenshot.png)
 
 ## Quick Start
 
@@ -59,6 +54,10 @@ open http://localhost:3000
 
 > Data is stored in a named Docker volume (`j1notes_data`) and survives container restarts.
 
+The `docker compose up` command starts two containers:
+- **j1notes** — the Next.js web app (port 3000)
+- **j1notes-collab** — the real-time collaboration WebSocket server (port 1234)
+
 ### PostgreSQL
 
 ```bash
@@ -74,16 +73,46 @@ npx prisma db push
 npm run dev        # http://localhost:3000
 ```
 
+For local collaboration, start the Hocuspocus server separately:
+
+```bash
+cd hocuspocus-server
+npm install
+npm run dev        # ws://localhost:1234
+```
+
+## Live Collaboration
+
+Multiple users can open the same note and edit it simultaneously. Changes appear in real time via [Y.js](https://yjs.dev) CRDT and [Hocuspocus](https://hocuspocus.dev).
+
+- **No accounts required** — works with or without app lock enabled
+- **Presence indicators** — avatars show who is currently editing
+- **Auto-save** — changes are persisted every 2 seconds, no manual save needed
+- **Offline fallback** — if the collab server is unreachable, the editor works locally as usual
+
+### Network setup
+
+The browser connects to the Hocuspocus server directly. Port **1234** must be reachable from all clients:
+
+```bash
+# Open port 1234 on the host (Windows, run as admin)
+netsh advfirewall firewall add rule name="J1Notes Collab" dir=in action=allow protocol=TCP localport=1234
+```
+
+For HTTPS / reverse proxy setups, set `NEXT_PUBLIC_COLLAB_URL` (see Configuration below).
+
 ## Configuration
 
 All settings are passed as environment variables. Copy `.env.example` to `.env` and adjust:
 
 | Variable | Default | Description |
 |---|---|---|
-| `PORT` | `3000` | HTTP port |
+| `PORT` | `3000` | HTTP port for the web app |
 | `JWT_SECRET` | *(insecure)* | **Required in production.** Secret for session tokens |
 | `DATABASE_PROVIDER` | `sqlite` | `sqlite` or `postgresql` |
 | `DATABASE_URL` | `file:/data/j1notes.db` | Database connection string |
+| `COLLAB_PORT` | `1234` | Port for the collaboration WebSocket server |
+| `NEXT_PUBLIC_COLLAB_URL` | *(auto-detected)* | WebSocket URL for collaboration. Auto-detected as `ws[s]://[hostname]:1234`. Set this when behind a reverse proxy, e.g. `wss://notes.example.com:1234` |
 | `SMTP_HOST` | — | SMTP server for password-reset emails |
 | `SMTP_PORT` | `587` | SMTP port |
 | `SMTP_SECURE` | `false` | `true` for port 465 / TLS |
@@ -139,6 +168,9 @@ J1.Notes
 │       ├── email.ts          # SMTP / nodemailer
 │       ├── i18n/             # Internationalization (i18next)
 │       └── themes/           # Theme system
+├── hocuspocus-server/        # Real-time collaboration WebSocket server
+│   ├── index.ts              # Hocuspocus server (Y.js)
+│   └── Dockerfile
 ├── prisma/
 │   ├── schema.prisma         # SQLite schema
 │   └── schema.postgres.prisma
@@ -151,7 +183,7 @@ J1.Notes
 └── docker-compose.postgres.yml    # PostgreSQL deployment
 ```
 
-**Stack:** Next.js 15 · React 19 · TypeScript · Prisma ORM · SQLite / PostgreSQL · Tiptap · Tailwind CSS · Docker
+**Stack:** Next.js 15 · React 19 · TypeScript · Prisma ORM · SQLite / PostgreSQL · Tiptap · Y.js · Hocuspocus · Tailwind CSS · Docker
 
 ## Updating
 

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Plus, GripVertical, ListTodo, Image as ImageIcon, Pencil } from 'lucide-react';
+import { X, Plus, ListTodo, Image as ImageIcon, Pencil } from 'lucide-react';
 import NoteActionBar from './NoteActionBar';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -13,35 +13,71 @@ import Color from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
 import EditorToolbar from './EditorToolbar';
 import dynamic from 'next/dynamic';
 
 const DrawingModal = dynamic(() => import('./DrawingModal'), { ssr: false });
 
+// ── Helpers (same as in EditNoteModal) ───────────────────────────────────────
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function checklistToTaskListHtml(items: { text: string; checked: boolean }[]): string {
+  const lis = items
+    .map(item => `<li data-type="taskItem" data-checked="${item.checked}"><p>${escapeHtml(item.text)}</p></li>`)
+    .join('');
+  return `<ul data-type="taskList">${lis || '<li data-type="taskItem" data-checked="false"><p></p></li>'}</ul>`;
+}
+
+function getNodeText(node: any): string {
+  if (node.type === 'text') return node.text || '';
+  return (node.content || []).map(getNodeText).join('');
+}
+
+function extractChecklistItems(editor: ReturnType<typeof useEditor>): { text: string; checked: boolean }[] {
+  if (!editor) return [];
+  const items: { text: string; checked: boolean }[] = [];
+  const walk = (node: any) => {
+    if (node.type === 'taskItem') {
+      items.push({
+        text: (node.content || []).map(getNodeText).join('').trim(),
+        checked: node.attrs?.checked === true,
+      });
+    } else {
+      (node.content || []).forEach(walk);
+    }
+  };
+  (editor.getJSON().content || []).forEach(walk);
+  return items;
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export default function NoteEditor({ onNoteAdded, availableLabels = [] }: any) {
   const { t } = useTranslation(['notes', 'common']);
   const [isExpanded, setIsExpanded] = useState(false);
   const [title, setTitle] = useState('');
-  const [contentText, setContentText] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [bgImage, setBgImage] = useState('');
   const [isListMode, setIsListMode] = useState(false);
-  const [listItems, setListItems] = useState([{ text: '', checked: false }]);
-
   const [attachments, setAttachments] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [showDrawingModal, setShowDrawingModal] = useState(false);
-  const [dragListIdx, setDragListIdx] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        link: false,
-        underline: false,
-      }),
+      StarterKit.configure({ link: false, underline: false }),
       Underline,
       Link.configure({ openOnClick: false }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
@@ -50,15 +86,14 @@ export default function NoteEditor({ onNoteAdded, availableLabels = [] }: any) {
       Color,
       Subscript,
       Superscript,
+      TaskList,
+      TaskItem.configure({ nested: false }),
     ],
     content: '',
     editorProps: {
       attributes: {
         class: 'tiptap-editor w-full bg-transparent p-4 outline-none placeholder-gray-500',
       },
-    },
-    onUpdate: ({ editor }) => {
-      setContentText(editor.getHTML());
     },
     immediatelyRender: false,
   });
@@ -74,22 +109,31 @@ export default function NoteEditor({ onNoteAdded, availableLabels = [] }: any) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isExpanded, title, contentText, listItems, attachments, selectedLabels, selectedColor, bgImage, isListMode]);
+  }, [isExpanded, title, attachments, selectedLabels, selectedColor, bgImage, isListMode]);
 
   const toggleListMode = () => {
+    if (!editor) return;
     if (isListMode) {
-      const text = listItems.map(i => i.text).filter(t => t.trim() !== '').join('\n');
-      setContentText(text);
-      setListItems([{ text: '', checked: false }]);
-      const htmlContent = text ? `<p>${text.replace(/\n/g, '</p><p>')}</p>` : '';
-      editor?.commands.setContent(htmlContent);
+      // TaskList → plain text
+      const items = extractChecklistItems(editor);
+      const text = items.map(i => i.text).filter(t => t).join('\n');
+      editor.commands.setContent(
+        text ? `<p>${text.replace(/\n/g, '</p><p>')}</p>` : ''
+      );
+      setIsListMode(false);
     } else {
-      const plainText = editor?.getText() || '';
-      const lines = plainText.split('\n').filter(t => t.trim() !== '');
-      if (lines.length > 0) setListItems(lines.map(line => ({ text: line, checked: false })));
-      setContentText('');
+      // Text → TaskList
+      const text = editor.getText();
+      const lines = text.split('\n').filter(l => l.trim());
+      editor.commands.setContent(
+        checklistToTaskListHtml(
+          lines.length > 0
+            ? lines.map(l => ({ text: l, checked: false }))
+            : [{ text: '', checked: false }]
+        )
+      );
+      setIsListMode(true);
     }
-    setIsListMode(!isListMode);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,22 +150,33 @@ export default function NoteEditor({ onNoteAdded, availableLabels = [] }: any) {
   };
 
   const toggleLabel = (id: string) => {
-    if (selectedLabels.includes(id)) setSelectedLabels(selectedLabels.filter(l => l !== id));
-    else setSelectedLabels([...selectedLabels, id]);
+    setSelectedLabels(prev =>
+      prev.includes(id) ? prev.filter(l => l !== id) : [...prev, id]
+    );
   };
 
   const handleSave = async () => {
     const hasText = (editor?.getText() || '').trim().length > 0;
-    const hasListItems = listItems.some(item => item.text.trim().length > 0);
-    if (!title.trim() && !hasText && (!isListMode || !hasListItems) && attachments.length === 0) { resetEditor(); return; }
+    if (!title.trim() && !hasText && attachments.length === 0) {
+      resetEditor();
+      return;
+    }
 
-    const cleanListItems = isListMode ? listItems.filter(i => i.text.trim() !== '') : [];
+    const checklist_items = isListMode && editor ? extractChecklistItems(editor) : [];
+    const content_text = isListMode ? null : (editor?.getHTML() || null);
+
     try {
       const res = await fetch('/api/notes', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title, content_text: isListMode ? null : contentText, color: selectedColor || null, bg_image: bgImage || null,
-          checklist_items: cleanListItems, attachments, label_ids: selectedLabels
+          title,
+          content_text,
+          color: selectedColor || null,
+          bg_image: bgImage || null,
+          checklist_items,
+          attachments,
+          label_ids: selectedLabels,
         }),
       });
       if (!res.ok) throw new Error('save failed');
@@ -133,9 +188,13 @@ export default function NoteEditor({ onNoteAdded, availableLabels = [] }: any) {
   };
 
   const resetEditor = () => {
-    setTitle(''); setContentText(''); setListItems([{ text: '', checked: false }]);
-    setSelectedColor(''); setBgImage(''); setIsExpanded(false);
-    setIsListMode(false); setAttachments([]); setSelectedLabels([]);
+    setTitle('');
+    setSelectedColor('');
+    setBgImage('');
+    setIsExpanded(false);
+    setIsListMode(false);
+    setAttachments([]);
+    setSelectedLabels([]);
     editor?.commands.setContent('');
   };
 
@@ -182,84 +241,46 @@ export default function NoteEditor({ onNoteAdded, availableLabels = [] }: any) {
 
         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
 
-        {!isListMode ? (
-          <div onClick={() => setIsExpanded(true)}>
-            {isExpanded ? (
-              <>
-                {editor && <EditorToolbar editor={editor} />}
-                <EditorContent editor={editor} />
-              </>
-            ) : (
-              <div
-                className="w-full bg-transparent p-4 cursor-text text-sm flex items-center justify-between"
-                style={{ color: 'var(--theme-text-muted)' }}
-                onClick={() => setIsExpanded(true)}
-              >
-                <span>{t('notes:placeholders.takeANote')}</span>
-                <div className="flex items-center gap-1">
-                  <EditorIconBtn onClick={e => { e.stopPropagation(); setIsExpanded(true); setIsListMode(true); }} title={t('notes:tooltips.newList')}>
-                    <ListTodo size={18} />
-                  </EditorIconBtn>
-                  <EditorIconBtn onClick={e => { e.stopPropagation(); setShowDrawingModal(true); }} title={t('notes:tooltips.newNoteWithDrawing')}>
-                    <Pencil size={18} />
-                  </EditorIconBtn>
-                  <EditorIconBtn onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }} title={t('notes:tooltips.newNoteWithImage')}>
-                    <ImageIcon size={18} />
-                  </EditorIconBtn>
+        <div onClick={() => setIsExpanded(true)}>
+          {isExpanded || isListMode ? (
+            <>
+              {editor && !isListMode && <EditorToolbar editor={editor} />}
+              <EditorContent editor={editor} />
+              {isListMode && (
+                <div className="px-4 pb-2">
+                  <button
+                    onClick={() => editor?.chain().focus('end').run()}
+                    className="flex items-center gap-2 text-sm px-1 py-1"
+                    style={{ color: 'var(--theme-text-muted)' }}
+                  >
+                    <Plus size={16} /> {t('notes:placeholders.addListItem')}
+                  </button>
                 </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="p-4 space-y-1 max-h-64 overflow-y-auto">
-            {listItems.map((item, index) => (
-              <div
-                key={index}
-                draggable
-                onDragStart={() => setDragListIdx(index)}
-                onDragOver={e => e.preventDefault()}
-                onDrop={() => {
-                  if (dragListIdx === null || dragListIdx === index) return;
-                  const next = [...listItems];
-                  const [moved] = next.splice(dragListIdx, 1);
-                  next.splice(index, 0, moved);
-                  setListItems(next);
-                  setDragListIdx(null);
-                }}
-                className={`flex items-center gap-2 group rounded-lg px-1 transition-colors ${dragListIdx === index ? 'opacity-40' : ''}`}
-                onMouseEnter={e => { if (dragListIdx !== index) (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--theme-hover)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
-              >
-                <GripVertical size={14} className="opacity-0 group-hover:opacity-100 cursor-grab shrink-0" style={{ color: 'var(--theme-text-muted)' }} />
-                <input type="checkbox" disabled className="w-4 h-4 opacity-50 shrink-0" />
-                <input
-                  type="text"
-                  autoFocus={index === listItems.length - 1}
-                  placeholder={t('notes:placeholders.listItem')}
-                  value={item.text}
-                  onChange={e => { const n = [...listItems]; n[index].text = e.target.value; setListItems(n); }}
-                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); setListItems([...listItems, { text: '', checked: false }]); } }}
-                  className="flex-1 bg-transparent outline-none placeholder-gray-500 py-1"
-                  style={{ color: 'var(--theme-text)' }}
-                />
-                <button
-                  onClick={() => setListItems(listItems.filter((_, i) => i !== index))}
-                  className="opacity-0 group-hover:opacity-100 shrink-0"
-                  style={{ color: 'var(--theme-text-muted)' }}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
-            <button
-              onClick={() => setListItems([...listItems, { text: '', checked: false }])}
-              className="flex items-center gap-2 text-sm mt-2 px-1"
+              )}
+            </>
+          ) : (
+            <div
+              className="w-full bg-transparent p-4 cursor-text text-sm flex items-center justify-between"
               style={{ color: 'var(--theme-text-muted)' }}
             >
-              <Plus size={16} /> {t('notes:placeholders.addListItem')}
-            </button>
-          </div>
-        )}
+              <span>{t('notes:placeholders.takeANote')}</span>
+              <div className="flex items-center gap-1">
+                <EditorIconBtn
+                  onClick={e => { e.stopPropagation(); setIsExpanded(true); toggleListMode(); }}
+                  title={t('notes:tooltips.newList')}
+                >
+                  <ListTodo size={18} />
+                </EditorIconBtn>
+                <EditorIconBtn onClick={e => { e.stopPropagation(); setShowDrawingModal(true); }} title={t('notes:tooltips.newNoteWithDrawing')}>
+                  <Pencil size={18} />
+                </EditorIconBtn>
+                <EditorIconBtn onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }} title={t('notes:tooltips.newNoteWithImage')}>
+                  <ImageIcon size={18} />
+                </EditorIconBtn>
+              </div>
+            </div>
+          )}
+        </div>
 
         {selectedLabels.length > 0 && (
           <div className="px-4 pb-2 flex flex-wrap gap-2">
