@@ -43,7 +43,7 @@ function getOrCreateUserIdentity(): { name: string; color: string } {
   const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
   const idx = Math.floor(Math.random() * names.length);
   const identity = { name: names[idx], color: colors[idx] };
-  localStorage.setItem('j1notes_collab_identity', JSON.stringify(identity));
+  try { localStorage.setItem('j1notes_collab_identity', JSON.stringify(identity)); } catch {}
   return identity;
 }
 
@@ -128,7 +128,12 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
       url: getCollabUrl(),
       name: `note-${note.id}`,
       document: ydoc,
-      onSynced: () => setHasSynced(true),
+      onSynced: ({ state }: { state: boolean }) => {
+        if (state) {
+          setHasSynced(true);
+          setCollabOffline(false);
+        }
+      },
       onAwarenessChange: ({ states }: any) => {
         const users = (states as any[])
           .filter(s => s.user)
