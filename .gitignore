@@ -21,12 +21,18 @@ dist/
 
 # Uploads (user content, not tracked)
 public/uploads/*
+public/avatars/*
 !public/uploads/.gitkeep
+public/avatars/*
+
+# Test coverage
+coverage/
 
 # Misc
 .DS_Store
 *.tsbuildinfo
 Thumbs.db
+*.tgz
 
 # Logs
 *.log

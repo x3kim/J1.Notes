@@ -1,20 +1,21 @@
 version: '3.8'
 
 services:
-  gnotes:
+  j1notes:
     build: .
-    container_name: gnotes
+    image: j1notes
+    container_name: j1notes
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
     environment:
       - DATABASE_PROVIDER=sqlite
-      - DATABASE_URL=file:/data/gnotes.db
-      - JWT_SECRET=${JWT_SECRET:-gnotes-secret-change-me}
+      - DATABASE_URL=file:/data/j1notes.db
+      - JWT_SECRET=${JWT_SECRET:-CHANGE-ME-IN-PRODUCTION}
       - NODE_ENV=production
     volumes:
-      - gnotes_data:/data
-      - gnotes_uploads:/app/public/uploads
+      - j1notes_data:/data
+      - j1notes_uploads:/app/public/uploads
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
       interval: 30s
@@ -23,5 +24,5 @@ services:
       start_period: 10s
 
 volumes:
-  gnotes_data:
-  gnotes_uploads:
+  j1notes_data:
+  j1notes_uploads:

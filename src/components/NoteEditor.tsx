@@ -116,16 +116,20 @@ export default function NoteEditor({ onNoteAdded, availableLabels = [] }: any) {
     if (!title.trim() && !hasText && (!isListMode || !hasListItems) && attachments.length === 0) { resetEditor(); return; }
 
     const cleanListItems = isListMode ? listItems.filter(i => i.text.trim() !== '') : [];
-    await fetch('/api/notes', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title, content_text: isListMode ? null : contentText, color: selectedColor || null, bg_image: bgImage || null,
-        checklist_items: cleanListItems, attachments, label_ids: selectedLabels
-      }),
-    });
-
-    resetEditor();
-    onNoteAdded();
+    try {
+      const res = await fetch('/api/notes', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title, content_text: isListMode ? null : contentText, color: selectedColor || null, bg_image: bgImage || null,
+          checklist_items: cleanListItems, attachments, label_ids: selectedLabels
+        }),
+      });
+      if (!res.ok) throw new Error('save failed');
+      resetEditor();
+      onNoteAdded();
+    } catch {
+      // Speichern fehlgeschlagen — Inhalt bleibt erhalten
+    }
   };
 
   const resetEditor = () => {

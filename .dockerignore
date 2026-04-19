@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.claude
+.vscode
+.idea
+*.log
+npm-debug.log*
+.env.local
+.env.*.local
+coverage
+.DS_Store
+Thumbs.db
+README.md
+*.md
+data
+public/uploads

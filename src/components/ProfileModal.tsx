@@ -56,7 +56,7 @@ export default function ProfileModal({ onClose, onProfileUpdated }: ProfileModal
     setUploading(true);
     try {
       // Delete old avatar if it exists
-      if (avatar && avatar.startsWith('/avatars/')) {
+      if (avatar && avatar.startsWith('/uploads/')) {
         await fetch(`/api/avatar?file=${encodeURIComponent(avatar)}`, { method: 'DELETE' });
       }
 
@@ -77,7 +77,7 @@ export default function ProfileModal({ onClose, onProfileUpdated }: ProfileModal
   };
 
   const handleRemoveAvatar = async () => {
-    if (avatar && avatar.startsWith('/avatars/')) {
+    if (avatar && avatar.startsWith('/uploads/')) {
       await fetch(`/api/avatar?file=${encodeURIComponent(avatar)}`, { method: 'DELETE' });
     }
     setAvatar(null);
