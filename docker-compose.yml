@@ -23,6 +23,19 @@ services:
       retries: 3
       start_period: 10s
 
+  collab:
+    build: ./hocuspocus-server
+    container_name: j1notes-collab
+    restart: unless-stopped
+    ports:
+      - "${COLLAB_PORT:-1234}:1234"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 1234 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
 volumes:
   j1notes_data:
   j1notes_uploads:

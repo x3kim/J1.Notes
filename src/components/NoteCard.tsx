@@ -56,6 +56,10 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
     ...bgStyle,
   };
 
+  const CHECKLIST_PREVIEW_LIMIT = 5;
+  const visibleItems = note.checklist_items?.slice(0, CHECKLIST_PREVIEW_LIMIT) ?? [];
+  const hiddenCount = Math.max(0, (note.checklist_items?.length ?? 0) - CHECKLIST_PREVIEW_LIMIT);
+
   return (
     <>
       <div
@@ -99,10 +103,36 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
           </div>
         )}
 
-        <div className="p-4 flex-1">
+        {/* Pin button — absolutely positioned relative to card */}
+        {!isTrash && (
+          <div className="absolute top-3 right-3 flex gap-1">
+            <button
+              onClick={(e) => handleAction(e, () => onUpdate(note.id, { pinned: !note.pinned }))}
+              className={`p-1 rounded-full transition-all ${note.pinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+              style={{ color: note.pinned ? 'var(--theme-text)' : 'var(--theme-text-muted)' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--theme-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              <Pin size={18} className={note.pinned ? 'fill-current' : ''} />
+            </button>
+          </div>
+        )}
+
+        {/* Reminder indicator — absolutely positioned */}
+        {note.reminder_at && !isTrash && (
+          <div
+            className="absolute top-3 left-3 opacity-70"
+            style={{ color: 'var(--theme-accent)' }}
+            title={t('reminders.tooltip', { date: new Date(note.reminder_at).toLocaleString(i18n.language) })}
+          >
+            <Bell size={14} />
+          </div>
+        )}
+
+        {/* Content area — capped height so cards don't overflow the viewport */}
+        <div className="px-4 pt-4 pb-2 overflow-hidden max-h-80">
           <h3 className="font-semibold text-lg mb-2 pr-8" style={{ color: 'var(--theme-text)' }}>{note.title}</h3>
 
-          {/* content_text: kein stopPropagation mehr — Klick öffnet die Notiz überall */}
           {note.content_text && (
             <div
               className="text-sm mb-2 line-clamp-6 tiptap-preview"
@@ -111,9 +141,9 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
             />
           )}
 
-          {note.checklist_items && note.checklist_items.length > 0 && (
+          {visibleItems.length > 0 && (
             <div className="space-y-1">
-              {note.checklist_items.map((item: any) => (
+              {visibleItems.map((item: any) => (
                 <div key={item.id} className="flex items-start gap-2 text-sm" style={{ color: 'var(--theme-text-muted)' }}>
                   <input
                     type="checkbox"
@@ -126,6 +156,11 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
                   <span className={item.checked ? 'line-through opacity-50' : ''}>{item.text}</span>
                 </div>
               ))}
+              {hiddenCount > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--theme-text-muted)' }}>
+                  + {hiddenCount} more…
+                </p>
+              )}
             </div>
           )}
 
@@ -144,66 +179,42 @@ export default function NoteCard({ note, onDelete, onUpdate, onRefresh, onEdit, 
               ))}
             </div>
           )}
+        </div>
 
-          {!isTrash && (
-            <div className="absolute top-3 right-3 flex gap-1">
-              <button
-                onClick={(e) => handleAction(e, () => onUpdate(note.id, { pinned: !note.pinned }))}
-                className={`p-1 rounded-full transition-all ${note.pinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                style={{ color: note.pinned ? 'var(--theme-text)' : 'var(--theme-text-muted)' }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--theme-hover)')}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <Pin size={18} className={note.pinned ? 'fill-current' : ''} />
-              </button>
+        {/* Action bar — only visible on hover */}
+        <div className="px-4 pb-3 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+          {isTrash ? (
+            <div className="flex gap-2">
+              <ActionBtn onClick={e => handleAction(e, () => onDelete(note.id, true))} className="text-red-500"><Trash2 size={16} /></ActionBtn>
+              <ActionBtn onClick={e => handleAction(e, () => onUpdate(note.id, { deleted_at: null }))} className="text-blue-500"><RotateCcw size={16} /></ActionBtn>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              <NoteActionBar
+                selectedColor={note.color || ''}
+                selectedBgImage={note.bg_image || ''}
+                onColorChange={(c) => onUpdate(note.id, { color: c || null, bg_image: null })}
+                onBgImageChange={(img) => onUpdate(note.id, { bg_image: img || null, color: null })}
+                isListMode={false}
+                onToggleListMode={() => {}}
+                availableLabels={availableLabels}
+                selectedLabels={note.labels?.map((l: any) => l.id) || []}
+                onToggleLabel={(labelId: string) => {
+                  const newLabelIds = note.labels?.map((l: any) => l.id) || [];
+                  if (newLabelIds.includes(labelId)) {
+                    onUpdate(note.id, { label_ids: newLabelIds.filter((id: string) => id !== labelId) });
+                  } else {
+                    onUpdate(note.id, { label_ids: [...newLabelIds, labelId] });
+                  }
+                }}
+                onDuplicate={() => onDuplicate(note)}
+                onArchive={() => onUpdate(note.id, { archived: !note.archived, pinned: false })}
+                iconSize={16}
+                compact={false}
+              />
+              <ActionBtn onClick={e => handleAction(e, () => onDelete(note.id, false))} className="ml-auto text-red-400 hover:text-red-500"><Trash2 size={16} /></ActionBtn>
             </div>
           )}
-
-          {note.reminder_at && !isTrash && (
-            <div
-              className="absolute top-3 left-3 opacity-70"
-              style={{ color: 'var(--theme-accent)' }}
-              title={t('reminders.tooltip', { date: new Date(note.reminder_at).toLocaleString(i18n.language) })}
-            >
-              <Bell size={14} />
-            </div>
-          )}
-
-          {/* Action bar */}
-          <div className="mt-4" onClick={(e) => e.stopPropagation()}>
-            {isTrash ? (
-              <div className="flex gap-2">
-                <ActionBtn onClick={e => handleAction(e, () => onDelete(note.id, true))} className="text-red-500"><Trash2 size={16} /></ActionBtn>
-                <ActionBtn onClick={e => handleAction(e, () => onUpdate(note.id, { deleted_at: null }))} className="text-blue-500"><RotateCcw size={16} /></ActionBtn>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1">
-                <NoteActionBar
-                  selectedColor={note.color || ''}
-                  selectedBgImage={note.bg_image || ''}
-                  onColorChange={(c) => onUpdate(note.id, { color: c || null, bg_image: null })}
-                  onBgImageChange={(img) => onUpdate(note.id, { bg_image: img || null, color: null })}
-                  isListMode={false}
-                  onToggleListMode={() => {}}
-                  availableLabels={availableLabels}
-                  selectedLabels={note.labels?.map((l: any) => l.id) || []}
-                  onToggleLabel={(labelId: string) => {
-                    const newLabelIds = note.labels?.map((l: any) => l.id) || [];
-                    if (newLabelIds.includes(labelId)) {
-                      onUpdate(note.id, { label_ids: newLabelIds.filter((id: string) => id !== labelId) });
-                    } else {
-                      onUpdate(note.id, { label_ids: [...newLabelIds, labelId] });
-                    }
-                  }}
-                  onDuplicate={() => onDuplicate(note)}
-                  onArchive={() => onUpdate(note.id, { archived: !note.archived, pinned: false })}
-                  iconSize={16}
-                  compact={false}
-                />
-                <ActionBtn onClick={e => handleAction(e, () => onDelete(note.id, false))} className="ml-auto text-red-400 hover:text-red-500"><Trash2 size={16} /></ActionBtn>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
